@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Numerical instabilities in the interfacial transport problem</title>
+        <meta name="author" content="Kyle J. Huston">
+        <meta name="keywords" content="transport,modeling,chemical,engineering,numerical,instability,interface,interfacial">
+	<script type="text/javascript" async
+	  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+	</script>
+    </head>
+    <body>
+        <h1>Numerical instabilities in the interfacial transport problem</h1>
+        <h2>Contents</h2>
+        <ol>
+            <li>Description of physics</li>
+            <li>Governing equation and boundary conditions for three
+		 systems of increasing complexity</li>
+            <li>Finite differences on position</li>
+	    <li>Time stepping</li>
+	    <li>Results and Discussion</li>
+	    <li>Conclusion</li>
+            <li>References</li>
+	</ol>
+	<ol>
+		<h2><li>Description of physics</li></h2>
+		<p>
+		A spherical droplet of one liquid (phase 1) is surrounded by a
+		semi-infinite liquid (phase 2). It is assumed that under all
+		compositions of interest, the system remains two-phase and is
+		not significantly altered, e.g. forming 1 or 3 phases instead.
+		The two-phase system contains a surfactant component which
+		starts uniformly distributed in either phase 1 or phase 2.
+		The surfactant undergoes Fickian diffusion with a constant
+		diffusivity.
+		</p>
+		<p>
+		At the interface, the surfactant component can be adsorbed.
+		There is an adsorption rate 
+		</p>
+		<h2><li>Governing equation and boundary conditions for three
+				systems of increasing complexity</li></h2>
+		<h2><li>Finite differences on position</li></h2>
+        <p>
+        In my first attempt, I tried to introduce an equilibration substep
+        at each timestep in which I re-distributed mass between the Γ node
+        and the C_0 node. However, I soon realized this is a bad approach.
+        There is no physical process that equilibrates the interface with a
+        slab of solution with thickness equal to the grid size.
+        </p>
+        <p>
+        A more fruitful approach is to assert that C_0 is wholly slaved to
+        Γ by the equilibrium relation, and that rather than redistributing
+        mass between C_0 and Γ at each time step, Γ can be updated by a
+        finite difference approximation of the flux onto the surface. I would
+        like to make just one investigation: the sensitivity of the flux
+        approximation to the number of nodes used in the finite difference
+        calculation of the concentration derivative at the interface based on
+        n nodes C_0, C_1, ... C_{n-1}.
+        </p>
+		<h2><li>Time stepping</li></h2>
+		<h2><li>Results and Discussion</li></h2>
+		<h2><li>Conclusion</li></h2>
+		<h2><li>References</li></h2>
+	</ol>
+    </body>
+</html>
