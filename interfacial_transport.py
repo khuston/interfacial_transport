@@ -1,6 +1,6 @@
 import numpy as np
 import logging
-from math import exp, factorial, pi
+from math import exp, factorial
 from scipy.integrate import simps
 
 logger = logging.getLogger(__name__)
@@ -131,7 +131,7 @@ def make_cs_from_Gamma(a, Gamma_infty, kappa, n):
     return cs_from_Gamma
 
 
-def compute(m, D, c0, R, L, a, Gamma_infty, kappa, n, times_to_save):
+def compute(m, D, c0, R, L, a, Gamma_infty, kappa, n, times_to_save, noflux_bc=False):
     Gamma = 0.
     c = np.array([c0]*m)
     r = np.linspace(R, R+L, m)
@@ -162,7 +162,8 @@ def compute(m, D, c0, R, L, a, Gamma_infty, kappa, n, times_to_save):
         if t + dt >= times_to_save[0]:
             dt = times_to_save[0] - t
 
-        cr[0] = cs_from_Gamma(Gamma)*r[0]
+        if noflux_bc:
+            cr[0] = cs_from_Gamma(Gamma)*r[0]
 
         # EXPLICIT EULER TIME INTEGRATION
 
@@ -173,6 +174,7 @@ def compute(m, D, c0, R, L, a, Gamma_infty, kappa, n, times_to_save):
         # Update the radius-weighted concentrations with the planar
         # Laplacian approximated with centered finite differences
         cr += dt*A.dot(cr)
+        cr[-1] = cr[-2]*r[-1]/r[-2]
 
         logging.debug('time = {}; Gamma = {:1.5f}'.format(t, Gamma))
         if t == times_to_save[0]:
@@ -189,9 +191,15 @@ def compute(m, D, c0, R, L, a, Gamma_infty, kappa, n, times_to_save):
     for cr in cr_save:
         c_save.append(list(cr/r))
 
-    return np.array(c_save), Gamma_save
+    return np.array(c_save), np.array(Gamma_save)
 
 
 def compute_mass_balance(Gamma, c, r, R):
-    total_mass = Gamma + simps(c*r**2./R**2., r, axis=1)
+    if c.ndim == 1:
+        axis=0
+    elif c.ndim == 2:
+        axis=1
+    else:
+        raise ValueError('Unexpected c.ndim == {}'.format(c.ndim))
+    total_mass = Gamma + simps(c*r**2./R**2., r, axis=axis)
     return total_mass
